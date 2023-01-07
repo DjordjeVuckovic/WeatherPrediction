@@ -8,10 +8,10 @@ import statsmodels.api as sm
 from scipy.stats import norm
 import numpy as np
 
-dataset= pd.read_csv('dataset/final_dataset.csv')
+dataset = pd.read_csv('dataset/final_dataset.csv')
+
 
 def model_accuracy(y_predv, y_test, n, d):
-
     mse = mean_squared_error(y_test, y_predv)
     mae = mean_absolute_error(y_test, y_predv)
     rmse = np.sqrt(mse)
@@ -27,16 +27,20 @@ def model_accuracy(y_predv, y_test, n, d):
     res = pd.concat([pd.DataFrame(y_test.values), pd.DataFrame(y_predv)], axis=1)
     res.columns = ['y', 'y_pred']
     print(res.head(30))
-#values between 0 and 1 scale -MinMax
-def scale_data(x,scale_mode):
+
+
+# values between 0 and 1 scale -MinMax
+def scale_data(x, scale_mode):
     scaler = StandardScaler()
     if scale_mode == "standard":
         scaler = StandardScaler()
     if scale_mode == "min_max":
         scaler = MinMaxScaler()
-    scaled_data  = scaler.fit_transform(x)
+    scaled_data = scaler.fit_transform(x)
     scaled_df = pd.DataFrame(scaled_data)
     return scaled_df
+
+
 def linear_regression(X, y):
     # scale
     X = scale_data(X, "min-max")
@@ -55,8 +59,10 @@ def linear_regression(X, y):
     print(f'Test score: {test_score:.2f}')
     print("Coefs: ", model.coef_)
     y_predict = model.predict(x_test)
-    model_accuracy(y_predict,y_test, x_test.shape[0], x_test.shape[1])
-def ridge_regression(X,y,alpha_val=10):
+    model_accuracy(y_predict, y_test, x_test.shape[0], x_test.shape[1])
+
+
+def ridge_regression(X, y, alpha_val=10):
     X = scale_data(X, "min-max")
     print(X.head())
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
@@ -72,7 +78,9 @@ def ridge_regression(X,y,alpha_val=10):
     y_predict = model.predict(x_test)
     print("Coefs: ", model.coef_)
     model_accuracy(y_predict, y_test, x_test.shape[0], x_test.shape[1])
-def lasso_regression(X,y,alpha_val=0.01):
+
+
+def lasso_regression(X, y, alpha_val=0.01):
     X = scale_data(X, "min-max")
     print(X.head())
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
@@ -88,10 +96,12 @@ def lasso_regression(X,y,alpha_val=0.01):
     y_predict = model.predict(x_test)
     print("Coefs: ", model.coef_)
     model_accuracy(y_predict, y_test, x_test.shape[0], x_test.shape[1])
+
+
 X = dataset.drop(['PM_US Post'], axis=1)
 y = dataset['PM_US Post']
 linear_regression(X, y)
-#only correlated features
+# only correlated features
 print("Correlated features")
 X_corr = dataset[['season', 'PRES', 'cv', 'HUMI']]
 y_corr = dataset['PM_US Post']
@@ -100,14 +110,18 @@ print("Ridge reg")
 ridge_regression(X, y)
 print("Lasso reg")
 lasso_regression(X, y)
-#foward selection
+# foward selection
 print("Forward  selection")
+
+
 # Define a function to evaluate the model performance
 def evaluate_model(X_train, y_train, X_test, y_test, features):
     model = LinearRegression()
     model.fit(X_train[features], y_train)
     y_pred = model.predict(X_test[features])
     return mean_squared_error(y_test, y_pred)
+
+
 # Initialize an empty list to store the selected features
 selected_features = []
 # Iterate over the full set of features
@@ -127,6 +141,6 @@ for feature in X.columns:
 print(selected_features)
 print("Linear regression with forward selection")
 X_forward = dataset[['year', 'month', 'day', 'hour', 'season', 'DEWP', 'HUMI', 'PRES', 'TEMP', 'Iws'
-                , 'precipitation', 'Iprec', 'NE', 'NW', 'SE', 'SW', 'cv']]
+    , 'precipitation', 'Iprec', 'NE', 'NW', 'SE', 'SW', 'cv']]
 y_forward = dataset['PM_US Post']
-linear_regression(X_forward,y_forward)
+linear_regression(X_forward, y_forward)

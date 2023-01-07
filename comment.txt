@@ -1,0 +1,3 @@
+-Mean(sr vrednost 1,2,3 -2) vs median(tacna srednina u listi vrednosti 1,2,3 -2)
+1.median je bolji za outlejere(vrednosti kolona koje puno odskacu od ostalih)
+2.ako dataset nije u normalnoj distribuciji median je bolji(positive,symmetric skew,negative skew)
